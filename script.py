@@ -14,6 +14,10 @@ URLS = [
           "label": "Mobile.BG - Sofia",
           "url": "https://www.mobile.bg/obiavi/avtomobili-dzhipove/honda/civic/oblast-sofiya?price=4000&price1=8000&sort=6&nup=014"
       },
+       {
+          "label": "Mobile.BG - Dupnitsa",
+          "url": "https://www.mobile.bg/obiavi/avtomobili-dzhipove/honda/civic/oblast-dupnitsa?price=4000&price1=8000&sort=6&nup=014"
+      },
          {
           "label": "Auto.BG - Pernik",
           "url": "https://www.auto.bg/obiavi/avtomobili-dzhipove/honda/civic/oblast-pernik?nup=013&price=4000&price1=8000"
@@ -21,6 +25,10 @@ URLS = [
        {
           "label": "Auto.BG - Sofia",
           "url": "https://www.auto.bg/obiavi/avtomobili-dzhipove/honda/civic/oblast-sofiya?nup=013&price=4000&price1=8000"
+      },
+       {
+          "label": "Auto.BG - Dupnitsa",
+          "url": "https://www.auto.bg/obiavi/avtomobili-dzhipove/honda/civic/oblast-dupnitsa?nup=013&price=4000&price1=8000"
       },
 ]
 SEEN_FILE = "seen_listings.json"
@@ -40,7 +48,10 @@ def load_seen():
 seen_listings = load_seen()
 
 def log_new_listings_to_file(label, new_items):
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open("new_listings.txt", "a", encoding="utf-8") as f:
+        f.write(f"\n=== NEW CARS FOUND - {timestamp} ===\n")
         for title, link in new_items:
             f.write(f"[{label}] {title} - {link}\n")
 
@@ -49,6 +60,7 @@ def log_new_listings_to_file(label, new_items):
 def save_seen(data):
     with open(SEEN_FILE, "w") as f:
         json.dump(data, f)
+
 
 def parse_listings(label, soup, url):
     results = []
@@ -104,6 +116,7 @@ def check_new_listings():
                     save_seen(seen_listings)
 
             if new_items:
+               print(f"🆕 Found {len(new_items)} new cars on {label}")
                log_new_listings_to_file(label, new_items)
             else:
                 print(f"✅ No new listings for {label}.")
@@ -111,6 +124,8 @@ def check_new_listings():
         except Exception as e:
             print(f"⚠️ Error checking {label}: {e}")
 
+
 # Main loop
+
 if __name__ == "__main__":
-    check_new_listings()
+    new_cars = check_new_listings()
